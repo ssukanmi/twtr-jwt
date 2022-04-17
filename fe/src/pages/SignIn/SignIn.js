@@ -139,13 +139,23 @@ const SignIn = () => {
         console.log(data[0].access_token);
         console.log(data[0].refresh_token);
         console.log('---');
-        saveAuthorisation({
-          access: data[0].access_token,
-          refresh: data[0].refresh_token,
-        });
 
-        // back to landing page!
-        history.push("/");
+        // failed login
+        if (data[1] === 401) {
+          alert(data[0]);
+          history.push("/signin");
+        }
+
+        // successsful login
+        else {
+          saveAuthorisation({
+            access: data[0].access_token,
+            refresh: data[0].refresh_token,
+          });
+  
+          // back to landing page!
+          history.push("/");
+        }
       })
       .catch( (err) => {
         alert(err);

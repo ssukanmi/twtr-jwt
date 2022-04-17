@@ -31,8 +31,9 @@ import jwt
 g = dict()
 
 # mongo
-#mongo_client = MongoClient('mongodb://localhost:27017/')
-mongo_client = MongoClient("mongodb+srv://admin:admin@tweets.8ugzv.mongodb.net/tweets?retryWrites=true&w=majority")
+# mongo_client = MongoClient('mongodb://localhost:27017/')
+# mongo_client = MongoClient("mongodb+srv://admin:admin@tweets.8ugzv.mongodb.net/tweets?retryWrites=true&w=majority")
+mongo_client = MongoClient("mongodb+srv://admin:admin@skdb.ajdpd.mongodb.net/tweets?retryWrites=true&w=majority")
 
 app = Flask(__name__)
 CORS(app)
@@ -148,10 +149,10 @@ def login():
         print('users:', get_env_var('users'))
         if not user or not password:
             print('not user or not password!')
-            return jsonify(("Authentication is required and has failed!", status.HTTP_401_UNAUTHORIZED))
+            return jsonify(("Authentication is required please put credentials", status.HTTP_401_UNAUTHORIZED))
         elif not user in get_env_var('users'):
-            print('unknown user!')
-            return jsonify(("Unknown user!", status.HTTP_401_UNAUTHORIZED))
+            print('Unknown user!!!')
+            return jsonify(("Unknown user!!!", status.HTTP_401_UNAUTHORIZED))
         else:
             # presumably we only store password hashes and compare passed pwd
             # with our stored hash. For simplicity, we store the full password
@@ -163,7 +164,7 @@ def login():
             a = datetime.now()
             if not bcrypt.check_password_hash(password_hash, password):
                 print('bcrypt.check_password_hash(password_hash, password) returned False!')
-                return jsonify(("Authentication is required and has failed!", status.HTTP_401_UNAUTHORIZED))
+                return jsonify(("Authentication failed, please try again", status.HTTP_401_UNAUTHORIZED))
             b = datetime.now()
             print('check_password took:', b - a)
             # debugging
@@ -290,7 +291,8 @@ def atlas_connect():
     # });
 
     # Python
-    client = pymongo.MongoClient("mongodb+srv://admin:<password>@tweets.8ugzv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    # client = pymongo.MongoClient("mongodb+srv://admin:<password>@tweets.8ugzv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://admin:admin@skdb.ajdpd.mongodb.net/tweets?retryWrites=true&w=majority")
     db = client.test
 
 
@@ -330,7 +332,7 @@ def update_one(r):
                 {"_id" : r['_id']},
                 {"$set": r},
                 upsert=True)
-            printg ("...update_one() to mongo acknowledged:", result.modified_count)
+            print("...update_one() to mongo acknowledged:", result.modified_count)
         except Exception as e:
             print(e)
 
